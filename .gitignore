@@ -1,0 +1,14 @@
+venv/
+*.env
+access.py
+.idea/
+*/access.py
+.idea
+*.pyc
+__pycache__
+db.sqlite3
+.DS_Store
+venv
+env
+.env
+**/*.env
