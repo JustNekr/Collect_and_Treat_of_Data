@@ -1,6 +1,10 @@
 from pprint import pprint
 from lxml import html
 import requests
+from pymongo import MongoClient
+
+client = MongoClient('localhost', 27017)
+db = client["news"]
 
 url = 'https://lenta.ru'
 header = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -32,7 +36,9 @@ for url in urls:
         'news_link': url,
         'news_date': news_date,
     }
+    db.lenta.update_one({'news_link': url}, {'$set': news}, upsert=True)
     news_list.append(news)
 
 pprint(news_list)
+
 
