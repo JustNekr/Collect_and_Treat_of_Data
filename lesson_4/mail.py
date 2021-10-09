@@ -18,9 +18,21 @@ items = dom.xpath("//div[contains(@class,'daynews__item')]|//ul[@data-module='Tr
 urls = []
 news_list = []
 
-print(len(items))
+
 for item in items:
     link = item.xpath(".//a/@href")[0]
-    print(link)
-    # if link.startswith('/news'):  # отсеиваю рекламу
-    #     urls.append(url + link)
+    response_news = requests.get(link)
+    dom_news = html.fromstring(response_news.text)
+
+    news_name = dom_news.xpath("//div[contains(@class, 'article__intro')]/p/text()")[0].replace('\xa0', ' ')
+    source_name = dom_news.xpath("//span[contains(@class, 'breadcrumbs__item')]/span/a/@href")[0]
+    news_date = dom_news.xpath("//span[contains(@class, 'breadcrumbs__item')]/span/span/@datetime")[0]
+
+    news = {
+        'source_name': source_name,
+        'news_name': news_name,
+        'news_link': link,
+        'news_date': news_date,
+    }
+    db.mail.update_one({'news_link': link}, {'$set': news}, upsert=True)
+
