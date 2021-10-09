@@ -1,4 +1,3 @@
-from pprint import pprint
 from lxml import html
 import requests
 from pymongo import MongoClient
@@ -15,8 +14,6 @@ response = requests.get(url)
 dom = html.fromstring(response.text)
 
 items = dom.xpath("//div[contains(@class,'daynews__item')]|//ul[@data-module='TrackBlocks']/li[@class='list__item']")
-urls = []
-news_list = []
 
 
 for item in items:
