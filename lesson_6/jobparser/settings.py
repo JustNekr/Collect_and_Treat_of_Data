@@ -12,7 +12,7 @@ BOT_NAME = 'jobparser'
 SPIDER_MODULES = ['jobparser.spiders']
 NEWSPIDER_MODULE = 'jobparser.spiders'
 
-LOG_ENABLED = False
+LOG_ENABLED = True
 LOG_LEVEL = 'DEBUG'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
