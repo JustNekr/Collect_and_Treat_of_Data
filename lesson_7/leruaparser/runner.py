@@ -9,7 +9,6 @@ if __name__ == '__main__':
     crawler_settings.setmodule(settings)
     process = CrawlerProcess(settings=crawler_settings)
 
-    # query = input('что ищем?')
-    query = 'шкаф'
+    query = input('что ищем?')
     process.crawl(LeroymerlinSpider, query=query)
     process.start()
