@@ -17,9 +17,8 @@ class InstaSpider(scrapy.Spider):
 
     inst_login_link = 'https://www.instagram.com/accounts/login/ajax/'
 
-    inst_login = 'justnekr@gmail.com'
-    inst_pwd = '#PWD_INSTAGRAM_BROWSER:9:1635163985:AVdQAEXPdtt+ORZ2GGEO1vCVmliYrbPrvDkWDBpgePJDnPxWIH8K0hYoAtUPwscTgz1sSk6rmt6GfMQ0Hsi71rw2xSXeJ2FCB1N3uBEkAVMpjikrTJe9ywVEl2u+uAzUUbhAM51VbWfyOWJM9w=='
-
+    inst_login = LOGIN
+    inst_pwd = PASSWORD
     users_for_parse = ['morozik_ivan']
     following_url = 'https://www.instagram.com/morozik_ivan/following/'
 
@@ -39,27 +38,35 @@ class InstaSpider(scrapy.Spider):
     def login(self, response: HtmlResponse):
         j_data = response.json()
         if j_data['authenticated']:
-            yield response.follow(
-                f'/{self.users_for_parse[0]}',
-                callback=self.user_parse,
-                cb_kwargs={'username': self.users_for_parse[0]}
-            )
+            for user in self.users_for_parse:
+                yield response.follow(
+                    f'/{user}',
+                    callback=self.user_parse,
+                    cb_kwargs={'username': user}
+                )
 
     def user_parse(self, response: HtmlResponse, username):
         user_id = self.fetch_user_id(response.text, username)
-        print()
+        requests_users = ['followers', 'following']
 
         variables = {'count': 12,
                      'search_surface': 'follow_list_page'}
-        url_posts = f'https://i.instagram.com/api/v1/friendships/{user_id}/followers/?{urlencode(variables)}'
-
-        yield response.follow(url_posts,
+        followers_url = f'https://i.instagram.com/api/v1/friendships/{user_id}/followers/?{urlencode(variables)}'
+        yield response.follow(followers_url,
                               callback=self.followers_parse,
                               cb_kwargs={'username': username,
                                          'user_id': user_id,
                                          'variables': deepcopy(variables)}
                               )
 
+        variables = {'count': 12}
+        followers_url = f'https://i.instagram.com/api/v1/friendships/{user_id}/following/?{urlencode(variables)}'
+        yield response.follow(followers_url,
+                              callback=self.following_parse,
+                              cb_kwargs={'username': username,
+                                         'user_id': user_id,
+                                         'variables': deepcopy(variables)}
+                              )
 
     def followers_parse(self, response, username, user_id, variables):
         j_data = response.json()
@@ -70,11 +77,36 @@ class InstaSpider(scrapy.Spider):
                 username=user.get('username'),
                 photo=user.get('profile_pic_url'),
                 full_name=user.get('full_name'),
+                follower_of=username,
+                user_following=None
                 )
             yield item
         if j_data.get('big_list'):
             variables['max_id'] = j_data.get('next_max_id')
             next_url = f'https://i.instagram.com/api/v1/friendships/{user_id}/followers/?{urlencode(variables)}'
+            yield response.follow(next_url,
+                                  callback=self.followers_parse,
+                                  cb_kwargs={'username': username,
+                                             'user_id': user_id,
+                                             'variables': deepcopy(variables)}
+                                  )
+
+    def following_parse(self, response, username, user_id, variables):
+        j_data = response.json()
+        users = j_data.get('users')
+        for user in users:
+            item = InstaparserItem(
+                user_id=user.get('pk'),
+                username=user.get('username'),
+                photo=user.get('profile_pic_url'),
+                full_name=user.get('full_name'),
+                follower_of=None,
+                user_following=username
+                )
+            yield item
+        if j_data.get('big_list'):
+            variables['max_id'] = j_data.get('next_max_id')
+            next_url = f'https://i.instagram.com/api/v1/friendships/{user_id}/following/?{urlencode(variables)}'
             yield response.follow(next_url,
                                   callback=self.followers_parse,
                                   cb_kwargs={'username': username,

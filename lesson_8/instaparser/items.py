@@ -13,3 +13,5 @@ class InstaparserItem(scrapy.Item):
     username = scrapy.Field()
     photo = scrapy.Field()
     full_name = scrapy.Field()
+    follower_of = scrapy.Field()
+    user_following = scrapy.Field()
