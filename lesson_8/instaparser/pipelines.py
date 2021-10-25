@@ -11,4 +11,5 @@ from itemadapter import ItemAdapter
 class InstaparserPipeline:
     def process_item(self, item, spider):
         print(item)
+        print()
         return item
