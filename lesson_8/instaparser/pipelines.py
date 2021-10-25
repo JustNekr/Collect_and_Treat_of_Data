@@ -15,6 +15,8 @@ class InstaparserPipeline:
         add_to_set_elements = {'follower_of': item.pop('follower_of'),
                                'user_following': item.pop('user_following')
                                }
+        # по наличию в этих полях имени пользователя можно одним запросом собирать все
+        # подписки и подписчиков
         collection = self.mongo_base['friends']
         collection.update_one({'user_id': item['user_id']},
                               {'$set': item,
