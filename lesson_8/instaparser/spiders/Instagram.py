@@ -3,7 +3,7 @@ import re
 from copy import deepcopy
 from urllib.parse import urlencode
 
-from .env import PASSWORD, LOGIN
+from .env import PASSWORD, LOGIN, USERS
 import scrapy
 from scrapy.http import HtmlResponse
 
@@ -19,7 +19,7 @@ class InstaSpider(scrapy.Spider):
 
     inst_login = LOGIN
     inst_pwd = PASSWORD
-    users_for_parse = ['morozik_ivan', 'justnekr']
+    users_for_parse = USERS
     following_url = 'https://www.instagram.com/morozik_ivan/following/'
 
     user_for_parse = 0
