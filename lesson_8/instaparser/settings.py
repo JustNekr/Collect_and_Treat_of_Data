@@ -19,6 +19,8 @@ USER_AGENT = 'Instagram 155.0.0.37.107'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
+IMAGES_STORE = 'photos'
+
 LOG_ENABLED = True
 LOG_LEVEL = 'INFO'
 

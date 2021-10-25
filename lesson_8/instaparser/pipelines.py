@@ -19,19 +19,16 @@ class InstaparserPipeline:
 
 class InstaImagesPipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
-        print()
         if item['photo']:
             try:
                 yield scrapy.Request(item['photo'])
             except Exception as e:
                 print(e)
 
+    def item_completed(self, results, item, info):
+        print()
+        pass
+
     # def file_path(self, request, response=None, info=None, *, item=None):
     #     origin = super(LeruaImagesPipeline, self).file_path(request)
     #     return f"{item['query']}/{origin}"
-
-    def item_completed(self, results, item, info):
-        print()
-        item['photo'] = [itm[1] for itm in results if itm[0]]
-        return item
-
