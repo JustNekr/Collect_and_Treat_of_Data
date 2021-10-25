@@ -12,9 +12,16 @@ class InstaparserPipeline:
         self.mongo_base = client.instagram
 
     def process_item(self, item, spider):
-        print()
-        # collection = self.mongo_base[item['query']]
-        # collection.update_one({'link': item['link']}, {'$set': item}, upsert=True)
+        add_to_set_elements = {'follower_of': item.pop('follower_of'),
+                               'user_following': item.pop('user_following')
+                               }
+        collection = self.mongo_base['friends']
+        collection.update_one({'user_id': item['user_id']},
+                              {'$set': item,
+                               '$addToSet': add_to_set_elements},
+                              upsert=True
+                              )
+
         return item
 
 

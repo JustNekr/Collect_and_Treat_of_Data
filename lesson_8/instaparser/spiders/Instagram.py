@@ -19,7 +19,7 @@ class InstaSpider(scrapy.Spider):
 
     inst_login = LOGIN
     inst_pwd = PASSWORD
-    users_for_parse = ['morozik_ivan']
+    users_for_parse = ['morozik_ivan', 'justnekr']
     following_url = 'https://www.instagram.com/morozik_ivan/following/'
 
     user_for_parse = 0
@@ -108,7 +108,7 @@ class InstaSpider(scrapy.Spider):
             variables['max_id'] = j_data.get('next_max_id')
             next_url = f'https://i.instagram.com/api/v1/friendships/{user_id}/following/?{urlencode(variables)}'
             yield response.follow(next_url,
-                                  callback=self.followers_parse,
+                                  callback=self.following_parse,
                                   cb_kwargs={'username': username,
                                              'user_id': user_id,
                                              'variables': deepcopy(variables)}

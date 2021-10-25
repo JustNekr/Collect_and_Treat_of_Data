@@ -13,3 +13,4 @@ env
 .env
 **/*.env
 /lesson_8/instaparser/spiders/env.py
+photo/
