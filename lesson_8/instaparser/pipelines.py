@@ -12,6 +12,7 @@ class InstaparserPipeline:
         self.mongo_base = client.instagram
 
     def process_item(self, item, spider):
+        print()
         # collection = self.mongo_base[item['query']]
         # collection.update_one({'link': item['link']}, {'$set': item}, upsert=True)
         return item
@@ -26,9 +27,5 @@ class InstaImagesPipeline(ImagesPipeline):
                 print(e)
 
     def item_completed(self, results, item, info):
-        print()
-        pass
-
-    # def file_path(self, request, response=None, info=None, *, item=None):
-    #     origin = super(LeruaImagesPipeline, self).file_path(request)
-    #     return f"{item['query']}/{origin}"
+        item['photo'] = [itm[1] for itm in results if itm[0]]
+        return item
