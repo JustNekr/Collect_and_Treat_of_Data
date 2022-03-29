@@ -12,5 +12,5 @@ venv
 env
 .env
 **/*.env
-*.jpg
-photos
+photos/
+/lesson_8/instaparser/spiders/env.py
